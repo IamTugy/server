@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: tech
-          image: tugy/tech:latest
+          image: tugy/tech:sha-8b8dd92
           ports:
             - containerPort: 80
           resources:
