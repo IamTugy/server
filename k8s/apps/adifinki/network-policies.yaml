@@ -60,6 +60,9 @@ spec:
         - podSelector:
             matchLabels:
               app: nginx
+        - podSelector:
+            matchLabels:
+              app: risk
   egress:
     - ports:
         - port: 53
@@ -81,8 +84,14 @@ spec:
               app: redis
       ports:
         - port: 6379
+    - to:
+        - podSelector:
+            matchLabels:
+              app: market-data
+      ports:
+        - port: 8001
 ---
-# Allow market-data to be called by nginx, fetch external market data
+# Allow market-data to be called by nginx, portfolio, and risk
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
@@ -100,12 +109,24 @@ spec:
         - podSelector:
             matchLabels:
               app: nginx
+        - podSelector:
+            matchLabels:
+              app: portfolio
+        - podSelector:
+            matchLabels:
+              app: risk
   egress:
     - ports:
         - port: 53
           protocol: UDP
         - port: 53
           protocol: TCP
+    - to:
+        - podSelector:
+            matchLabels:
+              app: redis
+      ports:
+        - port: 6379
     - ports:
         - port: 443
 ---
@@ -139,6 +160,18 @@ spec:
               app: redis
       ports:
         - port: 6379
+    - to:
+        - podSelector:
+            matchLabels:
+              app: market-data
+      ports:
+        - port: 8001
+    - to:
+        - podSelector:
+            matchLabels:
+              app: portfolio
+      ports:
+        - port: 8002
     - ports:
         - port: 443
 ---
@@ -162,3 +195,6 @@ spec:
         - podSelector:
             matchLabels:
               app: risk
+        - podSelector:
+            matchLabels:
+              app: market-data
