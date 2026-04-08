@@ -1,0 +1,9 @@
+[tools]
+terraform = "1.10.5"
+helm      = "3.17.1"
+# kubeseal: install via `brew install kubeseal` (not available in mise registry)
+# kubectl and k3d are managed separately — do not re-pin here
+
+[env]
+# Automatically sets KUBECONFIG when working in this directory
+KUBECONFIG = "{{config_root}}/terraform/kubeconfig/local.yaml"

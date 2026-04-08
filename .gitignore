@@ -1,0 +1,36 @@
+# Terraform state — NEVER commit
+terraform/terraform.tfstate
+terraform/terraform.tfstate.backup
+terraform/.terraform/
+terraform/terraform.tfvars
+terraform/*.tfvars
+!terraform/terraform.tfvars.example
+
+# Generated kubeconfig — NEVER commit
+terraform/kubeconfig/*.yaml
+terraform/kubeconfig/*.kubeconfig
+*.kubeconfig
+
+# Terraform plan file
+terraform/tfplan
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Editor
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Crash logs
+crash.log
+crash.*.log
+
+# Sensitive override files
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json

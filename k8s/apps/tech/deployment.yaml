@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tech
+  namespace: apps
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tech
+  template:
+    metadata:
+      labels:
+        app: tech
+    spec:
+      containers:
+        - name: tech
+          image: tugy/tech:latest
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              cpu: 10m
+              memory: 16Mi
+            limits:
+              memory: 64Mi

@@ -1,0 +1,35 @@
+# Copy this file to terraform.tfvars and fill in real values.
+# terraform.tfvars is gitignored — never committed.
+#
+# Usage:
+#   cp terraform/terraform.tfvars.example terraform/terraform.tfvars
+#   # edit terraform/terraform.tfvars
+#   make apply
+
+# ── Cluster ──────────────────────────────────────────────────────────────────
+
+cluster_name = "local"
+k3s_image    = "rancher/k3s:v1.33.6-k3s1"
+server_count = 1
+agent_count  = 2
+
+# Host ports mapped to the cluster. Change if 8080/8443 are in use on your machine.
+http_host_port  = 8080
+https_host_port = 8443
+
+# Tailscale hostname of this machine — written into the kubeconfig so GitHub Actions
+# can reach the k8s API over Tailscale. Find it with: tailscale status
+tailscale_hostname = "michaels-mac-mini.tail233b09.ts.net"
+k8s_api_port       = 6443
+
+# ── Helm Chart Versions ───────────────────────────────────────────────────────
+# Update these to upgrade components.
+
+cert_manager_chart_version          = "1.20.1"
+sealed_secrets_chart_version        = "2.18.4"
+kube_prometheus_stack_chart_version = "82.15.1"
+
+# ── Secrets ───────────────────────────────────────────────────────────────────
+# REQUIRED: set a strong password. Never use the placeholder below in production.
+
+grafana_admin_password = "CHANGE_ME_use_a_strong_password"

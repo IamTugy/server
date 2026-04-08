@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: tech
+  namespace: apps
+spec:
+  selector:
+    app: tech
+  ports:
+    - port: 80
+      targetPort: 80

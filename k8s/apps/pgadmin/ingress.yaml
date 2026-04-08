@@ -1,0 +1,14 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: pgadmin
+  namespace: apps
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: Host(`pgadmin.tugy.org`)
+      kind: Rule
+      services:
+        - name: pgadmin
+          port: 80
