@@ -1,0 +1,162 @@
+---
+# Allow nginx to receive from Traefik
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: nginx
+  namespace: adifinki
+spec:
+  podSelector:
+    matchLabels:
+      app: nginx
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: kube-system
+  egress:
+    - ports:
+        - port: 53
+          protocol: UDP
+        - port: 53
+          protocol: TCP
+    - to:
+        - podSelector:
+            matchLabels:
+              app: portfolio
+      ports:
+        - port: 8000
+    - to:
+        - podSelector:
+            matchLabels:
+              app: market-data
+      ports:
+        - port: 8000
+    - to:
+        - podSelector:
+            matchLabels:
+              app: risk
+      ports:
+        - port: 8000
+---
+# Allow portfolio to talk to postgres and redis
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: portfolio
+  namespace: adifinki
+spec:
+  podSelector:
+    matchLabels:
+      app: portfolio
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app: nginx
+  egress:
+    - ports:
+        - port: 53
+          protocol: UDP
+        - port: 53
+          protocol: TCP
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: apps
+        - podSelector:
+            matchLabels:
+              app: postgresql
+      ports:
+        - port: 5432
+    - to:
+        - podSelector:
+            matchLabels:
+              app: redis
+      ports:
+        - port: 6379
+---
+# Allow market-data to be called by nginx
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: market-data
+  namespace: adifinki
+spec:
+  podSelector:
+    matchLabels:
+      app: market-data
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app: nginx
+  egress:
+    - ports:
+        - port: 53
+          protocol: UDP
+        - port: 53
+          protocol: TCP
+    - ports:
+        - port: 443
+---
+# Allow risk to be called by nginx
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: risk
+  namespace: adifinki
+spec:
+  podSelector:
+    matchLabels:
+      app: risk
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app: nginx
+  egress:
+    - ports:
+        - port: 53
+          protocol: UDP
+        - port: 53
+          protocol: TCP
+    - to:
+        - podSelector:
+            matchLabels:
+              app: redis
+      ports:
+        - port: 6379
+---
+# Allow redis to receive from portfolio and risk
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: redis
+  namespace: adifinki
+spec:
+  podSelector:
+    matchLabels:
+      app: redis
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app: portfolio
+        - podSelector:
+            matchLabels:
+              app: risk
