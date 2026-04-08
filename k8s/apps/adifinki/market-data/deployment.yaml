@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: market-data
+  namespace: adifinki
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: market-data
+  template:
+    metadata:
+      labels:
+        app: market-data
+    spec:
+      containers:
+        - name: market-data
+          image: tugy/adifinki-market-data:latest
+          ports:
+            - containerPort: 8001
+          env:
+            - name: REDIS_URL
+              value: redis://redis:6379
+          resources:
+            requests:
+              cpu: 50m
+              memory: 128Mi
+            limits:
+              memory: 512Mi

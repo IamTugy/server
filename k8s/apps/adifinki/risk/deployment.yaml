@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: risk
+  namespace: adifinki
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: risk
+  template:
+    metadata:
+      labels:
+        app: risk
+    spec:
+      containers:
+        - name: risk
+          image: tugy/adifinki-risk:latest
+          ports:
+            - containerPort: 8003
+          env:
+            - name: REDIS_URL
+              value: redis://redis:6379
+            - name: MARKET_DATA_URL
+              value: http://market-data:8001
+            - name: PORTFOLIO_URL
+              value: http://portfolio:8002
+          resources:
+            requests:
+              cpu: 50m
+              memory: 128Mi
+            limits:
+              memory: 512Mi

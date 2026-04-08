@@ -1,0 +1,14 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: nginx
+  namespace: adifinki
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: Host(`internal-beta.adifinki.com`)
+      kind: Rule
+      services:
+        - name: nginx
+          port: 80
