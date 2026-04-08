@@ -7,7 +7,7 @@ spec:
   entryPoints:
     - web
   routes:
-    - match: Host(`pgadmin.tugy.org`)
+    - match: Host(`pgadmin.tugy.dev`)
       kind: Rule
       services:
         - name: pgadmin

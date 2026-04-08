@@ -7,7 +7,7 @@ spec:
   entryPoints:
     - web
   routes:
-    - match: Host(`tech.tugy.org`) || Host(`tech.tugy.dev`)
+    - match: Host(`tech.tugy.dev`)
       kind: Rule
       services:
         - name: tech
