@@ -11,4 +11,26 @@ spec:
     - Ingress
     - Egress
   egress:
-    - {}
+    # DNS
+    - ports:
+        - port: 53
+          protocol: UDP
+        - port: 53
+          protocol: TCP
+    # Traefik in kube-system (HTTP traffic from tunnel to cluster)
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: kube-system
+      ports:
+        - port: 8000
+    # Cloudflare edge: HTTPS + QUIC (tunnel control plane)
+    - ports:
+        - port: 443
+          protocol: TCP
+        - port: 443
+          protocol: UDP
+        - port: 7844
+          protocol: UDP
+        - port: 7844
+          protocol: TCP

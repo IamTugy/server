@@ -1,5 +1,5 @@
 ---
-# Allow nginx to receive from Traefik
+# Allow nginx to receive from Traefik and proxy to backends
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
@@ -28,21 +28,21 @@ spec:
             matchLabels:
               app: portfolio
       ports:
-        - port: 8000
+        - port: 8002
     - to:
         - podSelector:
             matchLabels:
               app: market-data
       ports:
-        - port: 8000
+        - port: 8001
     - to:
         - podSelector:
             matchLabels:
               app: risk
       ports:
-        - port: 8000
+        - port: 8003
 ---
-# Allow portfolio to talk to postgres and redis
+# Allow portfolio to talk to postgres (in apps ns) and redis
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
@@ -70,7 +70,7 @@ spec:
         - namespaceSelector:
             matchLabels:
               kubernetes.io/metadata.name: apps
-        - podSelector:
+          podSelector:        # AND: only postgresql pod in apps namespace
             matchLabels:
               app: postgresql
       ports:
@@ -82,7 +82,7 @@ spec:
       ports:
         - port: 6379
 ---
-# Allow market-data to be called by nginx
+# Allow market-data to be called by nginx, fetch external market data
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
@@ -139,8 +139,10 @@ spec:
               app: redis
       ports:
         - port: 6379
+    - ports:
+        - port: 443
 ---
-# Allow redis to receive from portfolio and risk
+# Allow redis to receive from portfolio and risk only
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
