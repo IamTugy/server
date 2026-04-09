@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: market-data
-          image: tugy/adifinki-market-data:sha-59871bf
+          image: tugy/adifinki-market-data:sha-110fe06
           ports:
             - containerPort: 8001
           env:
