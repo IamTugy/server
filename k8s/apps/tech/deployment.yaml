@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: tech
-          image: tugy/tech:sha-86effbf
+          image: tugy/tech:sha-b4c33ac
           ports:
             - containerPort: 3000
           env:
