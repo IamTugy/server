@@ -17,10 +17,25 @@ spec:
         - name: tech
           image: tugy/tech:sha-8b8dd92
           ports:
-            - containerPort: 80
+            - containerPort: 3000
+          env:
+            - name: DB_PATH
+              value: /data/tech.db
+            - name: WEBHOOK_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: tech-webhook-token
+                  key: token
+          volumeMounts:
+            - name: db
+              mountPath: /data
           resources:
             requests:
               cpu: 10m
-              memory: 16Mi
+              memory: 32Mi
             limits:
-              memory: 64Mi
+              memory: 128Mi
+      volumes:
+        - name: db
+          persistentVolumeClaim:
+            claimName: tech-db
