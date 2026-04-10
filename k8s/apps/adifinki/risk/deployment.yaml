@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: risk
-          image: tugy/adifinki-risk:sha-110fe06
+          image: tugy/adifinki-risk:sha-50e0b51
           ports:
             - containerPort: 8003
           env:
