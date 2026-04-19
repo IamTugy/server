@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: web
-          image: tugy/recipes:sha-819aa1a
+          image: tugy/recipes:sha-5172138
           ports:
             - containerPort: 80
           resources:
