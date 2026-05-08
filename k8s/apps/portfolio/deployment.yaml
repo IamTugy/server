@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: portfolio
-          image: tugy/portfolio:sha-eff9f24
+          image: tugy/portfolio:sha-9003438
           ports:
             - containerPort: 80
           resources:
