@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: portfolio
-          image: tugy/adifinki-portfolio:sha-08ba8fc
+          image: tugy/adifinki-portfolio:sha-dcb984d
           ports:
             - containerPort: 8002
           env:
