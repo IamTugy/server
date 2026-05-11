@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: nginx
-          image: tugy/adifinki-nginx:sha-93f6619
+          image: tugy/adifinki-nginx:sha-fe1fb0d
           ports:
             - containerPort: 80
           resources:
