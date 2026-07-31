@@ -1,0 +1,52 @@
+name: Deploy recipes
+
+on:
+  workflow_dispatch:
+    inputs:
+      recipes_image:
+        required: true
+      recipes_api_image:
+        required: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Update image tags
+        run: |
+          sed -i "s|image: tugy/recipes:.*|image: ${{ github.event.inputs.recipes_image }}|" k8s/apps/recipes/deployment.yaml
+          sed -i "s|image: tugy/recipes-api:.*|image: ${{ github.event.inputs.recipes_api_image }}|" k8s/apps/recipes-api/deployment.yaml
+
+      - name: Commit updated manifests
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add k8s/apps/recipes/deployment.yaml k8s/apps/recipes-api/deployment.yaml
+          git diff --cached --quiet || git commit -m "deploy: bump recipes to ${{ github.sha }}"
+          git push
+
+      - name: Connect Tailscale
+        uses: tailscale/github-action@v2
+        with:
+          oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
+          oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
+          tags: tag:ci
+
+      - name: Apply manifests
+        env:
+          KUBECONFIG_DATA: ${{ secrets.KUBECONFIG_REMOTE }}
+        run: |
+          echo "$KUBECONFIG_DATA" | base64 -d > /tmp/kubeconfig.yaml
+          chmod 600 /tmp/kubeconfig.yaml
+          KUBECONFIG=/tmp/kubeconfig.yaml kubectl apply -f k8s/apps/mongo/
+          KUBECONFIG=/tmp/kubeconfig.yaml kubectl apply -f k8s/apps/redis/
+          KUBECONFIG=/tmp/kubeconfig.yaml kubectl apply -f k8s/apps/recipes-api/
+          KUBECONFIG=/tmp/kubeconfig.yaml kubectl apply -f k8s/apps/recipes/
+          KUBECONFIG=/tmp/kubeconfig.yaml kubectl rollout status deployment/recipes -n apps --timeout=120s
+          KUBECONFIG=/tmp/kubeconfig.yaml kubectl rollout status deployment/recipes-api -n apps --timeout=120s

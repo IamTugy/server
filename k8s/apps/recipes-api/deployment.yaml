@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: recipes-api
+  namespace: apps
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: recipes-api
+  template:
+    metadata:
+      labels:
+        app: recipes-api
+    spec:
+      containers:
+        - name: api
+          image: tugy/recipes-api:latest
+          ports:
+            - containerPort: 80
+          env:
+            - name: MONGO_URI
+              value: mongodb://mongo.apps.svc.cluster.local:27017/recipes
+            - name: REDIS_URL
+              value: redis://redis.apps.svc.cluster.local:6379
+            - name: CLERK_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: recipes-api-clerk
+                  key: secretKey
+          resources:
+            requests:
+              cpu: 20m
+              memory: 64Mi
+            limits:
+              cpu: 200m
+              memory: 256Mi
