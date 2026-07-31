@@ -44,8 +44,13 @@ jobs:
         run: |
           echo "$KUBECONFIG_DATA" | base64 -d > /tmp/kubeconfig.yaml
           chmod 600 /tmp/kubeconfig.yaml
+          # Secret must exist before the Deployment that mounts it, otherwise the
+          # pod hits CreateContainerConfigError and kubelet backoff can outlast the wait.
+          KUBECONFIG=/tmp/kubeconfig.yaml kubectl apply -f k8s/apps/recipes-api/sealed-secret.yaml
           KUBECONFIG=/tmp/kubeconfig.yaml kubectl apply -f k8s/apps/mongo/
           KUBECONFIG=/tmp/kubeconfig.yaml kubectl apply -f k8s/apps/redis/
+          KUBECONFIG=/tmp/kubeconfig.yaml kubectl rollout status statefulset/mongo -n apps --timeout=300s
+          KUBECONFIG=/tmp/kubeconfig.yaml kubectl rollout status statefulset/redis -n apps --timeout=300s
           KUBECONFIG=/tmp/kubeconfig.yaml kubectl apply -f k8s/apps/recipes-api/
           KUBECONFIG=/tmp/kubeconfig.yaml kubectl apply -f k8s/apps/recipes/
           KUBECONFIG=/tmp/kubeconfig.yaml kubectl rollout status deployment/recipes -n apps --timeout=120s
