@@ -47,6 +47,18 @@ spec:
                 secretKeyRef:
                   name: recipes-api-clerk
                   key: secretKey
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 80
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 80
+            initialDelaySeconds: 15
+            periodSeconds: 20
           resources:
             requests:
               cpu: 20m
