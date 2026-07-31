@@ -13,6 +13,25 @@ spec:
       labels:
         app: recipes-api
     spec:
+      initContainers:
+        # Best-effort populate of the `recipes` Mongo collection from the YAML
+        # recipe data baked into the image at /app/recipe-data. The seed script
+        # exits 0 even when seeding fails, so a bad seed never blocks startup.
+        - name: seed-recipes
+          image: tugy/recipes-api:latest
+          command: ["node", "dist/recipes/seed-recipes.js"]
+          env:
+            - name: MONGO_URI
+              value: mongodb://mongo.apps.svc.cluster.local:27017/recipes
+            - name: RECIPE_DATA_DIR
+              value: ./recipe-data
+          resources:
+            requests:
+              cpu: 10m
+              memory: 32Mi
+            limits:
+              cpu: 100m
+              memory: 128Mi
       containers:
         - name: api
           image: tugy/recipes-api:latest
