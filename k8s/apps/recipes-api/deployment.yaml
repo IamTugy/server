@@ -49,6 +49,22 @@ spec:
                 secretKeyRef:
                   name: recipes-api-clerk
                   key: secretKey
+            - name: R2_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: recipes-api-r2
+                  key: accessKeyId
+            - name: R2_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: recipes-api-r2
+                  key: secretAccessKey
+            - name: R2_ENDPOINT
+              value: https://0fa1fdc4fabc9fb72b70343462afa977.r2.cloudflarestorage.com
+            - name: R2_BUCKET
+              value: recipes-assets
+            - name: R2_PUBLIC_URL
+              value: https://recipes-assets.tugy.dev
           readinessProbe:
             httpGet:
               path: /health
