@@ -19,6 +19,7 @@ spec:
         # exits 0 even when seeding fails, so a bad seed never blocks startup.
         - name: seed-recipes
           image: tugy/recipes-api:sha-89103b8
+          imagePullPolicy: Always
           command: ["node", "dist/recipes/seed-recipes.js"]
           env:
             - name: MONGO_URI
@@ -35,6 +36,7 @@ spec:
       containers:
         - name: api
           image: tugy/recipes-api:sha-89103b8
+          imagePullPolicy: Always
           ports:
             - containerPort: 80
           env:
