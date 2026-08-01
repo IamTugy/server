@@ -65,6 +65,15 @@ spec:
               value: recipes-assets
             - name: R2_PUBLIC_URL
               value: https://recipes-assets.tugy.dev
+            - name: GITHUB_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: recipes-api-github
+                  key: token
+            - name: GITHUB_REPO
+              value: IamTugy/recipes
+            - name: OWNER_USER_ID
+              value: user_3HHok7VTx8lyXObDglJRi71DU6C
           readinessProbe:
             httpGet:
               path: /health
