@@ -18,7 +18,7 @@ spec:
         # recipe data baked into the image at /app/recipe-data. The seed script
         # exits 0 even when seeding fails, so a bad seed never blocks startup.
         - name: seed-recipes
-          image: tugy/recipes-api:sha-007db5d
+          image: tugy/recipes-api:sha-3c51aaf
           command: ["node", "dist/recipes/seed-recipes.js"]
           env:
             - name: MONGO_URI
@@ -34,7 +34,7 @@ spec:
               memory: 128Mi
       containers:
         - name: api
-          image: tugy/recipes-api:sha-007db5d
+          image: tugy/recipes-api:sha-3c51aaf
           ports:
             - containerPort: 80
           env:
