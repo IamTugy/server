@@ -14,6 +14,9 @@ spec:
         - podSelector:
             matchLabels:
               app: recipes-api
+        - podSelector:
+            matchLabels:
+              app: recipes-mcp
       ports:
         - port: 6379
           protocol: TCP
