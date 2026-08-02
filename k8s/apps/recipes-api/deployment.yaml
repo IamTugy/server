@@ -74,6 +74,11 @@ spec:
               value: IamTugy/recipes
             - name: OWNER_USER_ID
               value: user_3HHok7VTx8lyXObDglJRi71DU6C
+            - name: RECIPES_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: recipes-mcp-apikey
+                  key: apiKey
           readinessProbe:
             httpGet:
               path: /health

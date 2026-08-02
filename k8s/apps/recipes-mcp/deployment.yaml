@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: recipes-mcp
+  namespace: apps
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: recipes-mcp
+  template:
+    metadata:
+      labels:
+        app: recipes-mcp
+    spec:
+      containers:
+        - name: mcp
+          image: tugy/recipes-mcp:sha-placeholder
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 3000
+          env:
+            - name: PORT
+              value: "3000"
+            - name: RECIPES_API_BASE_URL
+              value: http://recipes-api.apps.svc.cluster.local:80
+            - name: RECIPES_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: recipes-mcp-apikey
+                  key: apiKey
+          resources:
+            requests:
+              cpu: 10m
+              memory: 32Mi
+            limits:
+              cpu: 100m
+              memory: 128Mi

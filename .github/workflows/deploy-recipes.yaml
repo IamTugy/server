@@ -7,6 +7,8 @@ on:
         required: true
       recipes_api_image:
         required: true
+      recipes_mcp_image:
+        required: true
 
 jobs:
   deploy:
@@ -22,12 +24,13 @@ jobs:
         run: |
           sed -i "s|image: tugy/recipes:.*|image: ${{ github.event.inputs.recipes_image }}|" k8s/apps/recipes/deployment.yaml
           sed -i "s|image: tugy/recipes-api:.*|image: ${{ github.event.inputs.recipes_api_image }}|" k8s/apps/recipes-api/deployment.yaml
+          sed -i "s|image: tugy/recipes-mcp:.*|image: ${{ github.event.inputs.recipes_mcp_image }}|" k8s/apps/recipes-mcp/deployment.yaml
 
       - name: Commit updated manifests
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add k8s/apps/recipes/deployment.yaml k8s/apps/recipes-api/deployment.yaml
+          git add k8s/apps/recipes/deployment.yaml k8s/apps/recipes-api/deployment.yaml k8s/apps/recipes-mcp/deployment.yaml
           git diff --cached --quiet || git commit -m "deploy: bump recipes to ${{ github.sha }}"
           git push
 
@@ -47,11 +50,14 @@ jobs:
           # Secret must exist before the Deployment that mounts it, otherwise the
           # pod hits CreateContainerConfigError and kubelet backoff can outlast the wait.
           KUBECONFIG=/tmp/kubeconfig.yaml kubectl apply -f k8s/apps/recipes-api/sealed-secret.yaml
+          KUBECONFIG=/tmp/kubeconfig.yaml kubectl apply -f k8s/apps/recipes-mcp/sealed-secret.yaml
           KUBECONFIG=/tmp/kubeconfig.yaml kubectl apply -f k8s/apps/mongo/
           KUBECONFIG=/tmp/kubeconfig.yaml kubectl apply -f k8s/apps/redis/
           KUBECONFIG=/tmp/kubeconfig.yaml kubectl rollout status statefulset/mongo -n apps --timeout=300s
           KUBECONFIG=/tmp/kubeconfig.yaml kubectl rollout status statefulset/redis -n apps --timeout=300s
           KUBECONFIG=/tmp/kubeconfig.yaml kubectl apply -f k8s/apps/recipes-api/
           KUBECONFIG=/tmp/kubeconfig.yaml kubectl apply -f k8s/apps/recipes/
+          KUBECONFIG=/tmp/kubeconfig.yaml kubectl apply -f k8s/apps/recipes-mcp/
           KUBECONFIG=/tmp/kubeconfig.yaml kubectl rollout status deployment/recipes -n apps --timeout=120s
           KUBECONFIG=/tmp/kubeconfig.yaml kubectl rollout status deployment/recipes-api -n apps --timeout=120s
+          KUBECONFIG=/tmp/kubeconfig.yaml kubectl rollout status deployment/recipes-mcp -n apps --timeout=120s
