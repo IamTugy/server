@@ -51,6 +51,7 @@ jobs:
           # pod hits CreateContainerConfigError and kubelet backoff can outlast the wait.
           KUBECONFIG=/tmp/kubeconfig.yaml kubectl apply -f k8s/apps/recipes-api/sealed-secret.yaml
           KUBECONFIG=/tmp/kubeconfig.yaml kubectl apply -f k8s/apps/recipes-mcp/sealed-secret.yaml
+          KUBECONFIG=/tmp/kubeconfig.yaml kubectl apply -f k8s/apps/recipes-mcp/oauth-sealed-secret.yaml
           KUBECONFIG=/tmp/kubeconfig.yaml kubectl apply -f k8s/apps/mongo/
           KUBECONFIG=/tmp/kubeconfig.yaml kubectl apply -f k8s/apps/redis/
           KUBECONFIG=/tmp/kubeconfig.yaml kubectl rollout status statefulset/mongo -n apps --timeout=300s

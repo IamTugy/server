@@ -29,6 +29,22 @@ spec:
                 secretKeyRef:
                   name: recipes-mcp-apikey
                   key: apiKey
+            - name: REDIS_URL
+              value: redis://redis.apps.svc.cluster.local:6379
+            - name: MCP_PUBLIC_URL
+              value: https://mcp.tugy.dev
+            - name: CLERK_FRONTEND_API
+              value: https://clerk.tugy.dev
+            - name: CLERK_OAUTH_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: recipes-mcp-oauth
+                  key: clerkOAuthClientId
+            - name: CLERK_OAUTH_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: recipes-mcp-oauth
+                  key: clerkOAuthClientSecret
           resources:
             requests:
               cpu: 10m
