@@ -79,6 +79,11 @@ spec:
                 secretKeyRef:
                   name: recipes-mcp-apikey
                   key: apiKey
+            - name: MCP_JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: mcp-jwt-secret
+                  key: secret
           readinessProbe:
             httpGet:
               path: /health

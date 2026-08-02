@@ -45,6 +45,11 @@ spec:
                 secretKeyRef:
                   name: recipes-mcp-oauth
                   key: clerkOAuthClientSecret
+            - name: MCP_JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: mcp-jwt-secret
+                  key: secret
           resources:
             requests:
               cpu: 10m
