@@ -73,7 +73,7 @@ spec:
             - name: GITHUB_REPO
               value: IamTugy/recipes
             - name: OWNER_USER_ID
-              value: user_3HHok7VTx8lyXObDglJRi71DU6C
+              value: user_3HPJ4j3dNkQv27nDh4WpuFAL4KB
             - name: RECIPES_API_KEY
               valueFrom:
                 secretKeyRef:
