@@ -84,6 +84,11 @@ spec:
                 secretKeyRef:
                   name: mcp-jwt-secret
                   key: secret
+            - name: GEMINI_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: recipes-api-gemini
+                  key: apiKey
           readinessProbe:
             httpGet:
               path: /health
