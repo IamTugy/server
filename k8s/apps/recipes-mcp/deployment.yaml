@@ -34,7 +34,7 @@ spec:
             - name: MCP_PUBLIC_URL
               value: https://mcp.tugy.dev
             - name: CLERK_FRONTEND_API
-              value: https://workable-baboon-22.clerk.accounts.dev
+              value: https://clerk.tugy.dev
             - name: CLERK_OAUTH_CLIENT_ID
               valueFrom:
                 secretKeyRef:
