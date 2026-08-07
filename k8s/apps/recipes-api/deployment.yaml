@@ -18,7 +18,7 @@ spec:
         # recipe data baked into the image at /app/recipe-data. The seed script
         # exits 0 even when seeding fails, so a bad seed never blocks startup.
         - name: seed-recipes
-          image: tugy/recipes-api:sha-8600fe2
+          image: tugy/recipes-api:sha-b37a57d
           imagePullPolicy: Always
           command: ["node", "dist/recipes/seed-recipes.js"]
           env:
@@ -35,7 +35,7 @@ spec:
               memory: 128Mi
       containers:
         - name: api
-          image: tugy/recipes-api:sha-8600fe2
+          image: tugy/recipes-api:sha-b37a57d
           imagePullPolicy: Always
           ports:
             - containerPort: 80
