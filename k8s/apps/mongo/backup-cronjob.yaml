@@ -1,0 +1,81 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mongo-backup
+  namespace: apps
+spec:
+  accessModes: ["ReadWriteOnce"]
+  storageClassName: local-path
+  resources:
+    requests:
+      storage: 10Gi
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: mongo-backup
+  namespace: apps
+spec:
+  schedule: "0 3 * * *"
+  jobTemplate:
+    spec:
+      backoffLimit: 2
+      template:
+        metadata:
+          labels:
+            app: mongo-backup
+        spec:
+          restartPolicy: OnFailure
+          containers:
+            - name: mongodump
+              image: mongo:7
+              command:
+                - bash
+                - -c
+                - |
+                  set -euo pipefail
+                  ts=$(date +%F-%H%M%S)
+                  mongodump --host mongo --archive="/backup/mongo-${ts}.archive" --gzip
+                  echo "Backup written: mongo-${ts}.archive"
+                  # Keep the last 14 days of backups.
+                  find /backup -name 'mongo-*.archive' -mtime +14 -delete
+              volumeMounts:
+                - name: backup
+                  mountPath: /backup
+              resources:
+                requests:
+                  cpu: 50m
+                  memory: 128Mi
+                limits:
+                  memory: 512Mi
+          volumes:
+            - name: backup
+              persistentVolumeClaim:
+                claimName: mongo-backup
+---
+# default-deny-all blocks egress by default; this pod needs to reach the
+# mongo service and DNS to run mongodump.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: mongo-backup
+  namespace: apps
+spec:
+  podSelector:
+    matchLabels:
+      app: mongo-backup
+  policyTypes:
+    - Egress
+  egress:
+    - ports:
+        - port: 53
+          protocol: UDP
+        - port: 53
+          protocol: TCP
+    - to:
+        - podSelector:
+            matchLabels:
+              app: mongo
+      ports:
+        - port: 27017
+          protocol: TCP

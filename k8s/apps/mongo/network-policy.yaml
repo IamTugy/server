@@ -14,6 +14,9 @@ spec:
         - podSelector:
             matchLabels:
               app: recipes-api
+        - podSelector:
+            matchLabels:
+              app: mongo-backup
       ports:
         - port: 27017
           protocol: TCP

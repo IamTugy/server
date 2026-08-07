@@ -14,11 +14,22 @@ spec:
       labels:
         app: mongo
     spec:
+      # A hard kill mid-write is what corrupted the WiredTiger data files
+      # last time (5-day undetected crash-loop, fixed with `mongod --repair`).
+      # Give mongod real time to flush and close cleanly instead of racing
+      # the default 30s grace period.
+      terminationGracePeriodSeconds: 60
       containers:
         - name: mongo
           image: mongo:7
           ports:
             - containerPort: 27017
+          lifecycle:
+            preStop:
+              exec:
+                # Explicit clean shutdown rather than relying solely on SIGTERM -
+                # waits for an active checkpoint before exiting.
+                command: ["mongosh", "--quiet", "--eval", "db.adminCommand({shutdown: 1, force: false})"]
           volumeMounts:
             - name: data
               mountPath: /data/db
