@@ -23,7 +23,7 @@ variable "agent_count" {
 }
 
 variable "tailscale_hostname" {
-  description = "Tailscale hostname of this machine (e.g. michaels-mac-mini.tail233b09.ts.net). Written into the remote kubeconfig."
+  description = "Tailscale hostname of this machine (e.g. my-host.tailXXXXX.ts.net). Written into the remote kubeconfig."
   type        = string
 }
 

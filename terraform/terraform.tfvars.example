@@ -19,7 +19,7 @@ https_host_port = 8443
 
 # Tailscale hostname of this machine — written into the kubeconfig so GitHub Actions
 # can reach the k8s API over Tailscale. Find it with: tailscale status
-tailscale_hostname = "michaels-mac-mini.tail233b09.ts.net"
+tailscale_hostname = "my-host.tailXXXXX.ts.net"
 k8s_api_port       = 6443
 
 # ── Helm Chart Versions ───────────────────────────────────────────────────────
