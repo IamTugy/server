@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: web
-          image: tugy/recipes:sha-1f00c80
+          image: tugy/recipes:sha-dd7df3f
           imagePullPolicy: Always
           ports:
             - containerPort: 80
