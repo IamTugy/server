@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: mcp
-          image: tugy/recipes-mcp:sha-d268c08
+          image: tugy/recipes-mcp:sha-45132cf
           imagePullPolicy: Always
           ports:
             - containerPort: 3000
