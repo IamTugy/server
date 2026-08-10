@@ -1,25 +1,30 @@
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: mongo
+  name: metabase
   namespace: apps
 spec:
   podSelector:
     matchLabels:
-      app: mongo
+      app: metabase
   policyTypes:
     - Ingress
+    - Egress
   ingress:
     - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: kube-system
+  egress:
+    - ports:
+        - port: 53
+          protocol: UDP
+        - port: 53
+          protocol: TCP
+    - to:
         - podSelector:
             matchLabels:
-              app: recipes-api
-        - podSelector:
-            matchLabels:
-              app: mongo-backup
-        - podSelector:
-            matchLabels:
-              app: metabase
+              app: mongo
       ports:
         - port: 27017
           protocol: TCP

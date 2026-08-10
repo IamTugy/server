@@ -1,0 +1,72 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: metabase-data
+  namespace: apps
+spec:
+  accessModes: ["ReadWriteOnce"]
+  storageClassName: local-path
+  resources:
+    requests:
+      storage: 2Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: metabase
+  namespace: apps
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: metabase
+  template:
+    metadata:
+      labels:
+        app: metabase
+    spec:
+      containers:
+        - name: metabase
+          image: metabase/metabase:latest
+          ports:
+            - containerPort: 3000
+          env:
+            # Metabase's own app database (dashboards, saved questions,
+            # accounts) - a file on the mounted PVC, not the recipes Mongo -
+            # so config survives pod restarts without touching product data.
+            - name: MB_DB_FILE
+              value: /metabase-data/metabase.db
+            # No outbound internet access is granted (see network-policy.yaml)
+            # - disable Metabase's own phone-home checks rather than leaving
+            # them to fail silently against a default-deny egress policy.
+            - name: MB_ANONYMOUS_TRACKING_ENABLED
+              value: "false"
+            - name: MB_CHECK_FOR_UPDATES
+              value: "false"
+          volumeMounts:
+            - name: data
+              mountPath: /metabase-data
+          readinessProbe:
+            httpGet:
+              path: /api/health
+              port: 3000
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            failureThreshold: 12
+          livenessProbe:
+            httpGet:
+              path: /api/health
+              port: 3000
+            initialDelaySeconds: 60
+            periodSeconds: 20
+          resources:
+            requests:
+              cpu: 200m
+              memory: 1Gi
+            limits:
+              cpu: 500m
+              memory: 2Gi
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: metabase-data
