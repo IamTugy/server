@@ -22,14 +22,28 @@ spec:
       containers:
         - name: mongo
           image: mongo:7
+          # Authorization is enforced from here on - the admin/app/readonly
+          # users were created manually before this flag was added (auth
+          # must be off to create the very first user). Any further users
+          # must be created as an authenticated admin from now on.
+          args: ["--auth"]
           ports:
             - containerPort: 27017
+          env:
+            - name: MONGO_ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mongo-admin
+                  key: password
           lifecycle:
             preStop:
               exec:
                 # Explicit clean shutdown rather than relying solely on SIGTERM -
-                # waits for an active checkpoint before exiting.
-                command: ["mongosh", "--quiet", "--eval", "db.adminCommand({shutdown: 1, force: false})"]
+                # waits for an active checkpoint before exiting. Needs auth
+                # now that --auth is on, or this silently fails and we're
+                # back to the hard-kill corruption risk this hook exists to
+                # prevent.
+                command: ["sh", "-c", "mongosh --quiet -u admin -p \"$MONGO_ADMIN_PASSWORD\" --authenticationDatabase admin --eval 'db.adminCommand({shutdown: 1, force: false})'"]
           volumeMounts:
             - name: data
               mountPath: /data/db

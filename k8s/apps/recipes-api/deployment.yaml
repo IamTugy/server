@@ -23,7 +23,10 @@ spec:
           command: ["node", "dist/recipes/seed-recipes.js"]
           env:
             - name: MONGO_URI
-              value: mongodb://mongo.apps.svc.cluster.local:27017/recipes
+              valueFrom:
+                secretKeyRef:
+                  name: recipes-api-mongo
+                  key: uri
             - name: RECIPE_DATA_DIR
               value: ./recipe-data
           resources:
@@ -41,7 +44,10 @@ spec:
             - containerPort: 80
           env:
             - name: MONGO_URI
-              value: mongodb://mongo.apps.svc.cluster.local:27017/recipes
+              valueFrom:
+                secretKeyRef:
+                  name: recipes-api-mongo
+                  key: uri
             - name: REDIS_URL
               value: redis://redis.apps.svc.cluster.local:6379
             - name: CLERK_SECRET_KEY

@@ -30,13 +30,19 @@ spec:
           containers:
             - name: mongodump
               image: mongo:7
+              env:
+                - name: MONGO_ADMIN_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: mongo-admin
+                      key: password
               command:
                 - bash
                 - -c
                 - |
                   set -euo pipefail
                   ts=$(date +%F-%H%M%S)
-                  mongodump --host mongo --archive="/backup/mongo-${ts}.archive" --gzip
+                  mongodump --host mongo -u admin -p "$MONGO_ADMIN_PASSWORD" --authenticationDatabase admin --archive="/backup/mongo-${ts}.archive" --gzip
                   echo "Backup written: mongo-${ts}.archive"
                   # Keep the last 14 days of backups.
                   find /backup -name 'mongo-*.archive' -mtime +14 -delete
