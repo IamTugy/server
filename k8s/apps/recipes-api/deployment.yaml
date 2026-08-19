@@ -95,6 +95,21 @@ spec:
                 secretKeyRef:
                   name: recipes-api-gemini
                   key: apiKey
+            - name: VAPID_PUBLIC_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: recipes-api-vapid
+                  key: publicKey
+            - name: VAPID_PRIVATE_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: recipes-api-vapid
+                  key: privateKey
+            - name: VAPID_SUBJECT
+              valueFrom:
+                secretKeyRef:
+                  name: recipes-api-vapid
+                  key: subject
           readinessProbe:
             httpGet:
               path: /health
